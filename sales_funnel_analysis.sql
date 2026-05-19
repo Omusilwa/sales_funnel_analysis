@@ -12,7 +12,6 @@ WITH funnel_stages AS(
         COUNT(DISTINCT (CASE WHEN event_type = "payment_info" THEN user_id END)) AS stage_4_payment,
         COUNT(DISTINCT (CASE WHEN event_type = "purchase" THEN user_id END)) AS stage_5_purchase
 FROM user_events
-WHERE event_date >= (SELECT DATE_SUB(MAX(event_date), interval 30 day) FROM user_events)
 )
 SELECT * FROM funnel_stages;
 
@@ -25,7 +24,6 @@ WITH funnel_stages AS(
         COUNT(DISTINCT (CASE WHEN event_type = "payment_info" THEN user_id END)) AS stage_4_payment,
         COUNT(DISTINCT (CASE WHEN event_type = "purchase" THEN user_id END)) AS stage_5_purchase
 FROM user_events
-WHERE event_date >= (SELECT DATE_SUB(MAX(event_date), interval 30 day) FROM user_events)
 )
 SELECT 
 	stage_1_view,
@@ -53,22 +51,24 @@ WITH traffic_funnel AS(
         COUNT(DISTINCT (CASE WHEN event_type = "payment_info" THEN user_id END)) AS payment,
         COUNT(DISTINCT (CASE WHEN event_type = "purchase" THEN user_id END)) AS purchase
 FROM user_events
-WHERE event_date >= (SELECT DATE_SUB(MAX(event_date), interval 30 day) FROM user_events)
 GROUP BY traffic_source
 )
 SELECT 
 	traffic_source,
 	views,
+    cart,
+    payment,
 	purchase,
 	ROUND(purchase* 100/views,2) AS view_to_purchase_conversion
 FROM traffic_funnel;
 
--- time spent in each funnel
+-- user journey time spent 
 WITH time_spent AS(
 	SELECT
 		user_id,
 		MIN(CASE WHEN event_type = "page_view" THEN event_date END) AS view_time,
         MIN(CASE WHEN event_type = "add_to_cart" THEN event_date END) AS cart_time,
+        MIN(CASE WHEN event_type = "payment_info" THEN event_date END) AS payment_time,
         MIN(CASE WHEN event_type = "purchase" THEN event_date END) AS purchase_time
 FROM user_events
 GROUP BY user_id
@@ -77,5 +77,39 @@ HAVING MIN(CASE WHEN event_type = "purchase" THEN event_date END) IS NOT NULL
 SELECT 
 	COUNT(*) AS converted_users,
     ROUND(AVG(timestampdiff(MINUTE,view_time,cart_time)),2) AS view_cart_time_conversion,
-    ROUND(AVG(timestampdiff(MINUTE,cart_time,purchase_time)),2) AS cart_to_purchase_conversion
+    ROUND(AVG(timestampdiff(MINUTE,cart_time,payment_time)),2) AS cart_to_payment_time_conversion,
+    ROUND(AVG(timestampdiff(MINUTE,payment_time,purchase_time)),2) AS payment_to_purchase_conversion,
+    ROUND(AVG(timestampdiff(MINUTE,view_time,purchase_time)),2) AS overal_conversion_time
 FROM time_spent;
+
+-- funnel revenue
+WITH revenue_funnel AS(
+	SELECT
+		traffic_source,
+		COUNT(DISTINCT (CASE WHEN event_type = "page_view" THEN user_id END)) AS total_visits,
+        COUNT(DISTINCT (CASE WHEN event_type = "purchase" THEN user_id END)) AS total_buyers,
+        COUNT((CASE WHEN event_type = "purchase" THEN 1 END)) AS total_orders,
+        ROUND(SUM(CASE WHEN event_type = "purchase" THEN amount END),2) AS sum_revenue
+FROM user_events
+GROUP BY traffic_source)
+SELECT
+	traffic_source,
+    total_visits,
+    total_buyers,
+    sum_revenue,
+    ROUND(sum_revenue/total_orders,2) AS order_value,
+    ROUND(sum_revenue/total_buyers,2) AS revenue_per_buyer
+FROM revenue_funnel;
+
+-- revenue driver
+SELECT 
+	traffic_source,
+	COUNT(DISTINCT (product_id)) AS product, 
+    ROUND(SUM(amount),2) AS revenue_by_product
+FROM user_events
+GROUP BY traffic_source;
+
+
+
+
+
