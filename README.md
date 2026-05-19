@@ -1,18 +1,193 @@
-# sales_funnel_analysis
+# **sales_funnel_analysis**
+----
 
-#### Project Overview:
+### **Project Analysis Summary**:
 
-This project analyzes e-commerce customer behavior using SQL to better understand the sales funnel, user conversion patterns, and traffic source performance. The repository contains a transactional sales dataset in CSV format together with SQL scripts designed to transform raw event data into actionable business insights.
+This section summarizes the key analyses performed on the e-commerce sales dataset using SQL. The analyses focused on understanding customer behavior throughout the sales funnel, evaluating conversion performance, analyzing traffic source effectiveness, measuring user journey duration, and identifying top revenue-generating products.
 
-The main objective of the analysis is to evaluate how users progress through different stages of the sales funnel and identify where potential customers drop off before completing a purchase. Using SQL techniques such as Common Table Expressions (CTEs), CASE statements, aggregations, and conditional logic, customer events are grouped into meaningful funnel stages for analysis.
+The goal of these analyses was to demonstrate how SQL can be used to transform raw transactional data into actionable business insights that support data-driven decision-making in an e-commerce environment.
 
-#### Key Analysis Areas
-- Mapping customer events into funnel stages such as:
-  - Product View
-  - Add to Cart
-  - Payment
-  - Purchase
-- Measuring user drop-off across the funnel to identify stages with the highest customer loss
-- Calculating conversion rates between stages to evaluate how effectively users move toward purchase completion
-- Analyzing the payment-to-purchase transition to determine whether users experience friction during checkout
-- Comparing different traffic sources to identify channels that drive stronger engagement and higher conversions
+-----
+
+### **1. Sales Funnel Stage Analysis**
+This analysis examined how users progressed through different stages of the sales funnel, from product viewing to purchase completion.
+
+**Key Observation**
+
+A significant number of users enter the funnel through product views, but the largest drop-off occurs before cart addition. Users who reach the payment stage are highly likely to complete their purchases, indicating a relatively smooth checkout and payment experience.
+
+**Results**
+| Funnel Stage | Users |
+| ------------ | ----: |
+| Product View | 5,000 |
+| Add to Cart  | 1,553 |
+| Checkout     | 1,103 |
+| Payment      |   899 |
+| Purchase     |   826 |
+
+---
+
+### **2. Conversion Rate Analysis Across Funnel Stages**
+
+This analysis measured how efficiently users moved between stages of the funnel.
+
+**Key Observation**
+
+Conversion rates improve significantly as users move deeper into the funnel. The weakest stage is the transition from product viewing to cart addition, while the payment-to-purchase stage performs exceptionally well.
+
+**Results**
+| Funnel Transition       | Conversion Rate |
+| ----------------------- | --------------: |
+| View → Cart             |          31.06% |
+| Cart → Checkout         |          71.02% |
+| Checkout → Payment      |          81.51% |
+| Payment → Purchase      |          91.88% |
+| Overall Conversion Rate |          16.52% |
+
+---
+
+### **3. Sales Funnel Performance by Traffic Source**
+
+This analysis compared how different acquisition channels performed across the sales funnel.
+
+**Key Observation**
+
+Email traffic delivers the highest conversion efficiency, while organic traffic generates the largest overall traffic and purchase volume. Social traffic experiences the highest drop-off despite strong visitor numbers.
+
+**Results**
+| Traffic Source | Views | Cart | Payment | Purchases | Overall Conversion |
+| -------------- | ----: | ---: | ------: | --------: | -----------------: |
+| Email          |   522 |  326 |     190 |       177 |             33.91% |
+| Organic        | 2,038 |  669 |     381 |       343 |             16.83% |
+| Paid Ads       |   968 |  358 |     216 |       204 |             21.07% |
+| Social         | 1,472 |  200 |     112 |       102 |              6.93% |
+---
+
+### **4. User Journey Time Analysis**
+
+This analysis evaluated the average time users spent progressing through different funnel stages before completing purchases.
+
+**Key Observation**
+
+Users spend the most time during product evaluation and cart decision stages, suggesting that customer consideration and purchase evaluation occur primarily before checkout.
+
+**Results**
+| Journey Stage      | Average Time Spent |
+| ------------------ | -----------------: |
+| View → Cart        |         11.16 mins |
+| Cart → Payment     |         10.43 mins |
+| Payment → Purchase |          3.04 mins |
+| Total Journey Time |         24.63 mins |
+---
+
+### **5. Revenue Performance by Traffic Source**
+
+This analysis evaluated how different traffic channels contributed to revenue generation and customer purchasing behavior.
+
+**Key Observation**
+
+Organic traffic generates the highest total revenue due to scale, while email traffic delivers the most conversion-efficient audience. Social traffic produces the highest average order value despite weaker conversion performance.
+
+**Results**
+| Traffic Source | Total Visits | Total Buyers | Total Revenue | Average Order Value |
+| -------------- | -----------: | -----------: | ------------: | ------------------: |
+| Email          |          522 |          177 |     17,876.75 |              101.00 |
+| Organic        |        2,038 |          343 |     37,279.98 |              108.69 |
+| Paid Ads       |          968 |          204 |     21,487.54 |              105.33 |
+| Social         |        1,472 |          102 |     11,330.84 |              111.09 |
+---
+
+### **6. Revenue Generated by Each Product**
+
+This analysis identified the products contributing the highest order volume and revenue.
+
+**Key Observation**
+
+Revenue generation is relatively balanced across products, reducing dependency on a single top-performing product. Product 205 emerged as the strongest revenue contributor.
+
+**Results**
+| Product ID | Total Orders | Total Revenue |
+| ---------- | -----------: | ------------: |
+| 205        |          147 |     15,905.07 |
+| 404        |          141 |     15,377.31 |
+| 101        |          134 |     14,688.18 |
+| 305        |          138 |     14,622.48 |
+| 201        |          134 |     13,925.94 |
+| 102        |          132 |     13,456.13 |
+---
+
+### **Recommendations:**
+
+Based on the analyses performed, the following recommendations could help improve customer conversion, revenue generation, and overall business performance.
+
+**1. Optimize Product Pages to Improve Early Funnel Conversion**
+
+The largest customer drop-off occurs between product viewing and cart addition. Improving product pages could increase customer engagement and purchase intent.
+
+**Recommended Actions**
+- Improve product descriptions and visuals
+- Add stronger customer reviews and trust indicators
+- Highlight discounts, urgency, or promotions
+- Optimize mobile browsing experience
+
+**Expected Outcome**
+
+Higher View-to-Cart conversion rates and improved overall funnel performance.
+
+----
+
+**2. Expand and Personalize Email Marketing Campaigns**
+
+Email traffic demonstrated the highest conversion efficiency among all traffic sources.
+
+**Recommended Actions**
+- Increase personalized email campaigns
+- Implement abandoned cart recovery emails
+- Use customer segmentation for targeted promotions
+- Retarget previous purchasers with product recommendations
+
+**Expected Outcome**
+
+Higher repeat purchases, stronger customer retention, and increased revenue efficiency.
+
+---
+
+**3. Improve Social Traffic Conversion Performance**
+
+Social traffic generates strong visibility but weak conversion performance.
+
+**Recommended Actions**
+- Align social ads more closely with landing pages
+- Improve mobile checkout experience
+- Use retargeting campaigns for engaged social users
+- Promote high-performing or visually appealing products on social platforms
+
+**Expected Outcome**
+
+Reduced funnel drop-off from social users and increased revenue from social campaigns.
+
+----
+
+**4. Prioritize High-Performing Products in Marketing and Inventory Planning**
+
+Top-performing products consistently generate strong revenue and order volume.
+
+**Recommended Actions**
+- Increase visibility of high-performing products
+- Use top-selling products in upselling and cross-selling strategies
+- Maintain optimized inventory levels
+- Analyze customer segments purchasing top-performing products
+
+**Expected Outcome**
+
+Improved sales efficiency, higher product revenue contribution, and better inventory management.
+
+----
+
+### **Conclusion**
+
+This project demonstrates how SQL can be applied to real-world e-commerce analytics to uncover customer behavior patterns, measure conversion performance, evaluate marketing channel effectiveness, and identify revenue opportunities.
+
+The analyses combine technical SQL skills with business-focused thinking to generate actionable insights that support strategic decision-making in modern digital commerce environments.
+
+
